@@ -21,7 +21,7 @@ void getProbs(Eigen::VectorXd *);
 int main()
 {
     std::fstream fin;
-    fin.open("/Users/kolbesurran/Desktop/4375/Project_One/titanic_project.csv", std::ios::in);
+    fin.open("titanic_project.csv", std::ios::in);
 
     if (!fin.is_open())
     {
@@ -67,8 +67,8 @@ int main()
 
     Eigen::VectorXd weights(2);
     Eigen::VectorXd train_labels(900);
-    Eigen::VectorXd test_labels(data_frame.size() - 900);
-    populate_labels(data_frame, &test_labels, &train_labels);
+    Eigen::VectorXd test_labels(data_frame.size() - 900);     //splitting our data set into train and test sets
+    populate_labels(data_frame, &test_labels, &train_labels); //filling up the survived vectors for both training and testing
 
     for (int i = 0; i < 2; i++)
     { //initializing weights to 1.0
@@ -76,10 +76,10 @@ int main()
     }
     Eigen::MatrixXd data_matrix(train.size(), 2);
     Eigen::MatrixXd test_data_matrix(test.size(), 2);
-    populate_data_matrix(&data_matrix, train);
+    populate_data_matrix(&data_matrix, train); //populating the eigen matrix with the data from the vector
     populate_data_matrix(&test_data_matrix, test);
     std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
-    gradient_descent(.001, &data_matrix, &weights, &train_labels);
+    gradient_descent(.001, &data_matrix, &weights, &train_labels); //training
     std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double> >(end - start);
     std::cout << "Time taken: " << time_span.count() << std::endl;
@@ -115,7 +115,6 @@ void populate_labels(std::vector<std::vector<double> > data, Eigen::VectorXd *te
 
         if (i < 900)
         {
-            //std::cout << data[i][2] << std::endl;
             (*train_label)(i) = data[i][2];
         }
         else
@@ -141,7 +140,7 @@ void populate_train_test(std::vector<std::vector<double> > data, std::vector<std
     }
 }
 void populate_data_matrix(Eigen::MatrixXd *data_matrix, std::vector<std::vector<double> > train)
-{
+{ // only need to populate two columns, the intercept and pclass
 
     for (int i = 0; i < train.size(); i++)
     {

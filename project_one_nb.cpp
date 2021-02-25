@@ -183,7 +183,7 @@ private:
 
         for (int i = 0; i < outcomes.size(); i++)
         {
-            std::unordered_map<int, int> class_counts;
+            std::unordered_map<int, int> class_counts; //hashmap to count the number of appearances per class
             for (int j = 0; j < data.size(); j++)
             {
                 if (data[j][2] != outcomes[i])
@@ -202,7 +202,7 @@ private:
             for (int j = 0; j < possible_values.size(); j++)
             {
 
-                (*matrix)(i, j) = (double)class_counts[possible_values[j]] / (double)sizeOutcomes[i];
+                (*matrix)(i, j) = (double)class_counts[possible_values[j]] / (double)sizeOutcomes[i]; //using the class counts to find out conditional probs
             }
         }
     }
@@ -244,7 +244,7 @@ private:
 int main()
 {
     std::fstream fin;
-    fin.open("/Users/kolbesurran/Desktop/4375/Project_One/titanic_project.csv", std::ios::in);
+    fin.open("titanic_project.csv", std::ios::in);
 
     if (!fin.is_open())
     {
