@@ -1,0 +1,57 @@
+---
+title: "Project One"
+output:
+  html_document:
+    df_print: paged
+---
+## Kolbe Surran
+### kks170000
+
+### Data Exploration
+
+```{r}
+df = read.csv("/Users/kolbesurran/Desktop/4375/Project_One/titanic_project.csv")
+head(df)
+summary(df)
+cor(df)
+colSums(is.na(df))
+sum(is.na(df$age))
+```
+It appears we don't have to worry about NA values.  Utilizing these correlations, we will visually explore some of the relationships in the correlation matrix.
+
+```{r}
+par(mfrow=c(2,2))
+
+df$pclass <- as.factor(df$pclass)
+
+df$survived <- as.factor(df$survived)
+df$sex <- as.factor(df$sex)
+plot(df$survived,df$pclass, xlab="Survive", ylab="Class", main="Class vs. Survived")
+plot(df$survived, df$sex, xlab = "Survived", ylab="Sex", main="Sex vs. Survived")
+plot(df$pclass, df$X, xlab = "PClass", ylab="X", main="X vs PClass")
+plot(df$pclass, df$age, xlab = "PClass", ylab="Age", main="Age vs PClass")
+```
+
+Utilizing the data I gathered from the cor matrix, I plotted some of the ones that stood out.  The third graph which I thought was interesting due to the high correlation appears to me to be insignificant now.  I am estimating that the x class is some ticket id of some sort.  The box and whiskers seem to confirm this, notice how all of them go up almost sequentially with the maxes of the previous column being just at the mins of the next.  I don't think this will be significant to the model because we already have the pclass.  Going back to the first graph, class seems to be correlated with survived, the vast majority of people whom died appear to be in the third class and big minority of people that survived seem to be in the first class.  The second plot deals with the sex of the passengers vs surviving.  The vast majority of people who died appeared to be male, and roughly 70% of those who survived were female, suggesting that sex is a good predictor for survival.  For the fourth graph there is something interesting going on, if we take a look at pclass 1 we can se that the age range is much wider, and they in fact tend to skew older. A possible explanation of this could be that the people in the first class went on the titanic for the sake of luxury and vacation, while the people in lower classes saw the opportunity to emigrate to a new country.  Another explanation for this is that older people just generally tend to be more wealthy.
+
+```{r}
+train <- df[1:900,]
+test <- df[900:nrow(df),]
+start <- Sys.time()
+glm0 <- glm(survived~pclass,data=train,family=binomial)
+end <- Sys.time()
+summary(glm0)
+```
+```{r}
+p <- predict(glm0, newdata = test, type="response")
+pred <- ifelse(p>.5, 1,0)
+table(pred, test$survived)
+training_time <- end - start
+paste("training time duration in seconds:",training_time)
+```
+```{r}
+sigmoid <- function(z){
+  1.0 / (1+exp(-z))
+}
+sigmoid(c(1, 4, 6, 8, 10, 3))
+```
